@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Recurly API Endpoints</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                padding: 20px;
+            }
+            table {
+                width: 60%;
+                margin: 20px auto;
+                border-collapse: collapse;
+            }
+            th,
+            td {
+                border: 1px solid #ddd;
+                padding: 10px;
+                text-align: left;
+            }
+            th {
+                background-color: #f4f4f4;
+            }
+            a {
+                text-decoration: none;
+                color: blue;
+            }
+            button {
+                padding: 8px 15px;
+                margin: 5px;
+                cursor: pointer;
+            }
+        </style>
+        <script>
+            function apiCall(endpoint, method = "GET", body = null) {
+                let options = { method };
+                if (body) {
+                    options.headers = { "Content-Type": "application/json" };
+                    options.body = JSON.stringify(body);
+                }
+                fetch(endpoint, options)
+                    .then(response => response.json())
+                    .then(data => (document.getElementById("response").innerText = JSON.stringify(data, null, 2)))
+                    .catch(error => (document.getElementById("response").innerText = "Error: " + error));
+            }
+
+            function createSubscription() {
+                const accountCode = document.getElementById("accountCode").value;
+                const planCode = document.getElementById("planCode").value;
+                apiCall("/subscribe", "POST", { account_code: accountCode, plan_code: planCode });
+            }
+        </script>
+    </head>
+    <body>
+        <h2>Recurly API Endpoints</h2>
+        <table>
+            <tr>
+                <th>HTTP</th>
+                <th>API</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td><a href="/accounts" target="_blank">/accounts</a></td>
+                <td><button onclick="apiCall('/accounts')">Test</button></td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td><a href="/invoices" target="_blank">/invoices</a></td>
+                <td><button onclick="apiCall('/invoices')">Test</button></td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td>/subscribe</td>
+                <td>
+                    <input type="text" id="accountCode" placeholder="Account Code" />
+                    <input type="text" id="planCode" placeholder="Plan Code" />
+                    <button onclick="createSubscription()">Subscribe</button>
+                </td>
+            </tr>
+        </table>
+
+        <h3>Response:</h3>
+        <pre id="response">Click a button to see API response</pre>
+    </body>
+</html>
